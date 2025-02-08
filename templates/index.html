@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insert Data to Database</title>
+</head>
+<body>
+    <div style="text-align: center;">
+    <h2>MYSQL数据存储</h2>
+    <form id="register-form">
+        <label for="username">账号:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">密码:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="user_explain">备注:</label>
+        <input type="text" id="user_explain" name="user_explain" required><br><br>
+
+        <label for="plugin">加密方式:</label>
+        <input type="text" id="plugin" name="plugin" required><br><br>
+
+        <button type="submit" style="width: 100px;height: 50px;">保存</button><br><br>
+
+        <button type="button" style="width: 100px;height: 50px;" id="get-last-row">获取最后一行</button>
+         <div id="last-row-result" style="margin-top: 20px;"></div>
+    </form>
+    </div>
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userExplain = document.getElementById('user_explain').value;
+            const plugin = document.getElementById('plugin').value;
+
+            fetch('/insert_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    user_explain: userExplain,
+                    plugin: plugin
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('Data inserted successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to insert data.');
+            });
+        });
+        //获取后端数据库插入的最新值
+        document.getElementById('get-last-row').addEventListener('click', function () {
+            fetch('/get_last_row', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const lastRow = data.last_row;
+                    const resultDiv = document.getElementById('last-row-result');
+                    resultDiv.innerHTML = `
+                    <h1 style="color: red">最新插入的值为↓↓↓</h1>
+                    <form>
+                    <label for="username" style="color: #1E9FFF;font-weight: bold">账号:</label>
+                    <input type="text" value="${lastRow.username}"><br><br>
+
+                    <label for="password" style="color: #1E9FFF;font-weight: bold">密码:</label>
+                    <input type="text" value="${lastRow.password}"><br><br>
+
+                    <label for="user_explain" style="color: #1E9FFF;font-weight: bold">备注:</label>
+                    <input type="text" value="${lastRow.user_explain}"><br><br>
+
+                    <label for="plugin" style="color: #1E9FFF;font-weight: bold">加密方式:</label>
+                    <input type="text" value="${lastRow.plugin}"><br><br>
+                    </form>
+                    `;
+                } else {
+                    alert('Failed to fetch the last row data.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error fetching last row data.');
+            });
+        });
+    </script>
+</body>
+</html>
