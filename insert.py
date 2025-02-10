@@ -15,7 +15,7 @@ app = Flask(__name__,
 
 
 
-load_dotenv(r'D:\桌面\python_study\系统脚本\.env')
+load_dotenv(r'D:\pass\.env')
 password = os.getenv('MYSQL_PASSWORD')
 key = os.getenv('AES_KEY')
 # 连接数据库
@@ -29,16 +29,12 @@ def get_db_connection():
     return connection
 
 def aes_encrypt(data, key):
-            # 创建 AES 加密器，设置为 CBC 模式，初始化向量（IV）可以是任意的，但需要保持一致
             cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC)
 
-            # 对数据进行填充，使其长度为16的倍数
             padded_data = pad(data.encode('utf-8'), AES.block_size)
 
-            # 加密数据
             encrypted = cipher.encrypt(padded_data)
 
-            # 返回加密数据和IV，因为解密时需要用到IV
             return base64.b64encode(cipher.iv + encrypted).decode('utf-8')
 
 
