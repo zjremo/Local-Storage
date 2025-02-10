@@ -29,6 +29,7 @@ pip install -r requirements.txt
 python insert.py
 ```
 3.在浏览器输入`localhost:8081`即可访问
-![image](https://github.com/user-attachments/assets/a0d61610-3431-4b8b-99a7-423f545e76d1)
+![image](https://github.com/user-attachments/assets/2003c7ab-de33-49f7-baae-c045f9bfdeb7)
+
 
 
