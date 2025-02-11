@@ -1,7 +1,7 @@
 # Local Password Book
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
-![Flask](https://img.shields.io/badge/Flask-2.0%2B-lightgrey)
+![Flask](https://img.shields.io/badge/Flask-3.0%2B-lightgrey)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-orange)
 
 本地化密码存储小工具，通过Web界面安全存储账号凭证到MySQL数据库
@@ -29,5 +29,7 @@ pip install -r requirements.txt
 python insert.py
 ```
 3.在浏览器输入`localhost:8081`即可访问
-![image](https://github.com/user-attachments/assets/91f8e382-c421-4b66-8723-4d65414bc167)
+![image](https://github.com/user-attachments/assets/2003c7ab-de33-49f7-baae-c045f9bfdeb7)
+
+
 
