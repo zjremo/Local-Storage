@@ -15,30 +15,27 @@ app = Flask(__name__,
 
 
 
-load_dotenv(r'D:\桌面\python_study\系统脚本\.env')
+load_dotenv(r'D:\桌面\.env')
 password = os.getenv('MYSQL_PASSWORD')
 key = os.getenv('AES_KEY')
 # 连接数据库
 def get_db_connection():
     connection = mysql.connector.connect(
-        host='localhost',       # 数据库主机
-        user='root',            # 数据库用户名
-        password=password,  # 数据库密码
-        database='local'   # 数据库名称
+        host='localhost',
+        user='root',
+        password=password,
+        database='local'
     )
     return connection
 
 def aes_encrypt(data, key):
-            # 创建 AES 加密器，设置为 CBC 模式，初始化向量（IV）可以是任意的，但需要保持一致
+
             cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC)
 
-            # 对数据进行填充，使其长度为16的倍数
             padded_data = pad(data.encode('utf-8'), AES.block_size)
 
-            # 加密数据
             encrypted = cipher.encrypt(padded_data)
 
-            # 返回加密数据和IV，因为解密时需要用到IV
             return base64.b64encode(cipher.iv + encrypted).decode('utf-8')
 
 
@@ -57,16 +54,18 @@ def insert_data():
         cursor = conn.cursor()
 
         cursor.execute("SELECT id FROM account ORDER BY id DESC LIMIT 1;")
-        last_id = cursor.fetchone()[0]
-        print(last_id)
-        number_id = last_id + 1
-
+        last_id = cursor.fetchone()
+        if last_id is None:
+            number_id = 1
+        else:
+            last_id = last_id[0]
+            number_id = last_id + 1
         query = '''
             INSERT INTO account (id,username, `password`, user_explain, `plugin`)
             VALUES (%s,%s, %s, %s, %s)
         '''
         cursor.execute(query, (number_id,username, password, user_explain, plugin))
-        conn.commit()  # 提交事务
+        conn.commit()
 
         cursor.close()
         conn.close()
@@ -90,7 +89,7 @@ def update_user():
         plugin = data.get('plugin')
 
         if not number_id:
-            return jsonify({"message": "必须提供用户ID"}), 400
+            return jsonify({"message": "User ID must be provided!"}), 400
 
         password = aes_encrypt(password, key)
 
@@ -105,7 +104,7 @@ def update_user():
         if re.findall(target_id, str(id_list)):
             pass
         else:
-            return jsonify({"message": "ID不存在"}), 400
+            return jsonify({"message": "ID does not exist."}), 400
 
 
         query = '''
@@ -117,7 +116,7 @@ def update_user():
                 WHERE id = %s;
            '''
         cursor.execute(query, (username, password, user_explain, plugin,number_id))
-        conn.commit()  # 提交事务
+        conn.commit()
 
         cursor.close()
         conn.close()
