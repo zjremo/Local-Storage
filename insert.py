@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify,send_from_directory,render_template
+from flask import Flask, request, jsonify, send_from_directory, render_template
 import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
@@ -8,47 +8,52 @@ import base64
 import os
 import re
 
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
-app = Flask(__name__,
-            template_folder='templates',
-            static_folder='static')
-
-
-
-load_dotenv(r'D:\桌面\.env')
+# 加载.env文件
+# load_dotenv不会覆盖已存在的环境变量，必须设置override=True才能强制更新
+load_dotenv(r'D:\projectcode\python\Local-Storage\.env', override=True)
 password = os.getenv('MYSQL_PASSWORD')
-key = os.getenv('AES_KEY')
+hex_key = os.getenv('AES_KEY')  # 移除引号
+print("hex_key: ", hex_key)
+
+# 检查密钥是否加载成功
+if not hex_key:
+    raise ValueError("AES_KEY not found in environment variables")
+
+
 # 连接数据库
 def get_db_connection():
-    connection = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password=password,
-        database='local'
-    )
+    connection = mysql.connector.connect(host='localhost',
+                                         user='root',
+                                         password=password,
+                                         database='local',
+                                         port=3306)
     return connection
 
-def aes_encrypt(data, key):
+# aes进行加密
+def aes_encrypt(data, hex_key):
+    key = bytes.fromhex(hex_key)
 
-            cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC)
+    cipher = AES.new(key, AES.MODE_CBC)
 
-            padded_data = pad(data.encode('utf-8'), AES.block_size)
+    padded_data = pad(data.encode('utf-8'), AES.block_size)
 
-            encrypted = cipher.encrypt(padded_data)
+    encrypted = cipher.encrypt(padded_data)
 
-            return base64.b64encode(cipher.iv + encrypted).decode('utf-8')
+    return base64.b64encode(cipher.iv + encrypted).decode('utf-8')
 
 
 @app.route('/insert_data', methods=['POST'])
 def insert_data():
-     try:
+    try:
         data = request.get_json()
 
         username = data.get('username')
         password = data.get('password')
         user_explain = data.get('user_explain')
         plugin = data.get('plugin')
-        password = aes_encrypt(password,key)
+        password = aes_encrypt(password, hex_key)
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -64,7 +69,8 @@ def insert_data():
             INSERT INTO account (id,username, `password`, user_explain, `plugin`)
             VALUES (%s,%s, %s, %s, %s)
         '''
-        cursor.execute(query, (number_id,username, password, user_explain, plugin))
+        cursor.execute(query,
+                       (number_id, username, password, user_explain, plugin))
         conn.commit()
 
         cursor.close()
@@ -72,10 +78,12 @@ def insert_data():
 
         return jsonify({"message": "Data inserted successfully"}), 200
 
-     except Error as e:
+    except Error as e:
         print(f"Error: {e}")
-        return jsonify({"message": "Failed to insert data", "error": str(e)}), 500
-
+        return jsonify({
+            "message": "Failed to insert data",
+            "error": str(e)
+        }), 500
 
 
 @app.route('/update_user', methods=['POST'])
@@ -91,7 +99,7 @@ def update_user():
         if not number_id:
             return jsonify({"message": "User ID must be provided!"}), 400
 
-        password = aes_encrypt(password, key)
+        password = aes_encrypt(password, hex_key)
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -100,12 +108,11 @@ def update_user():
         check_id = cursor.fetchall()
         id_list = {row[0] for row in check_id}
 
-        target_id = r"\b" + number_id +r"\b"
+        target_id = r"\b" + number_id + r"\b"
         if re.findall(target_id, str(id_list)):
             pass
         else:
             return jsonify({"message": "ID does not exist."}), 400
-
 
         query = '''
                 UPDATE account
@@ -115,7 +122,8 @@ def update_user():
                     plugin = %s
                 WHERE id = %s;
            '''
-        cursor.execute(query, (username, password, user_explain, plugin,number_id))
+        cursor.execute(query,
+                       (username, password, user_explain, plugin, number_id))
         conn.commit()
 
         cursor.close()
@@ -135,12 +143,14 @@ def get_users():
 
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT username, password, user_explain,plugin FROM account")
+        cursor.execute(
+            "SELECT username, password, user_explain,plugin FROM account")
         users = cursor.fetchall()
 
         user_list = []
-        for idx,all_data in enumerate(users, start=1):
-            Completed=all_data['password'] = all_data['password'].decode('utf-8')
+        for idx, all_data in enumerate(users, start=1):
+            Completed = all_data['password'] = all_data['password'].decode(
+                'utf-8')
             all_data['id'] = idx
             user_list.append(all_data)
 
@@ -165,23 +175,21 @@ def decrypt_password():
 
     encrypted_text = encrypted_data[AES.block_size:]
 
-    cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC, iv)
+    key = bytes.fromhex(hex_key)
+
+    cipher = AES.new(key, AES.MODE_CBC, iv)
 
     decrypted = unpad(cipher.decrypt(encrypted_text), AES.block_size)
 
     decrypted = decrypted.decode('utf-8')
 
-    return jsonify({
-        'success': True,
-        'decrypted_password': decrypted
-    })
+    return jsonify({'success': True, 'decrypted_password': decrypted})
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
-
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0',port=8081)
-
+    app.run(debug=True, host='0.0.0.0', port=5001)
