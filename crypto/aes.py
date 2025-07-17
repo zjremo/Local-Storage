@@ -1,5 +1,6 @@
-import base64
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import base64
 
 def aes_encrypt(plaindata, hex_key):
     # 声明一个hex_key
@@ -10,7 +11,7 @@ def aes_encrypt(plaindata, hex_key):
     padded_data = pad(plaindata.encode('utf-8'), AES.block_size)
     # 执行加密操作
     encrypted_data = cipher.encrypt(padded_data)
-    return base64.b64encode(cipher.iv + encrypted_data).decode('utf-8')
+    return base64.b64encode(bytes(cipher.iv) + encrypted_data).decode('utf-8')
 
 def aes_decrypt(encrypted_data, hex_key):
     key = bytes.fromhex(hex_key)

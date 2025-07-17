@@ -1,10 +1,24 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-class FlaskConfig(BaseSettings):
-    DEBUG: bool = Field(default=False, env='FLASK_DEBUG')
-    APPName: str = Field(default='Local-Storage', env='FLASK_APP')
-    # 调用flash需要设置密钥，用于session和flash消息
-    SECRET_KEY: str = Field(default='123456', env='FLASK_SECRET_KEY')
 
-    
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+
+class FlaskConfig(BaseSettings):
+    DEBUG: bool = Field(
+        default=False,
+        validation_alias="FLASK_DEBUG",
+        description="Enable or disable debug mode for the Flask application. Debug mode provides detailed error pages and auto-reloads the server on code changes.",
+    )
+    APPName: str = Field(
+        default="Local-Storage",
+        validation_alias="Flask_APP",
+        description="The name of the Flask application. This is used for logging and identifying the application in various contexts.",
+    )
+    SECRET_KEY: str = Field(
+        default="dev",
+        validation_alias="FLASK_SECRET_KEY",
+        description="A secret key used for securely signing session cookies and other security-related needs. In production, this should be a strong, randomly generated string.",
+    )

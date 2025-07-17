@@ -2,5 +2,9 @@ Flask==3.1.0
 mysql-connector-python==8.0.32
 pycryptodome==3.21.0
 python-dotenv==1.0.1
-pycryptodome==3.21.0
-
+pymysql==1.1.0
+Flask-RESTful==0.3.10
+Flask-SQLAlchemy==3.1.1
+pydantic==2.7.0
+pydantic-settings==2.10.1
+Flask-Cors==4.0.0

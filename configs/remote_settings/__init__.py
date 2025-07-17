@@ -1,6 +1,10 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
+
 class RemoteConfig(BaseSettings):
-    REMOTE_CONFIG_URL: str = Field(default='', env='REMOTE_CONFIG_URL')
-    REMOTE_CONFIG_TOKEN: str = Field(default='', env='REMOTE_CONFIG_TOKEN')
+    REMOTE_CONFIG_URL: str = Field(
+        default="",
+        validation_alias="REMOTE_CONFIG_URL",
+        description="URL for fetching remote configuration settings",
+    )
