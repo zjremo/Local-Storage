@@ -9,12 +9,12 @@ from pydantic_settings import BaseSettings
 class FlaskConfig(BaseSettings):
     DEBUG: bool = Field(
         default=False,
-        validation_alias="FLASK_DEBUG",
+        validation_alias="DEBUG",
         description="Enable or disable debug mode for the Flask application. Debug mode provides detailed error pages and auto-reloads the server on code changes.",
     )
-    APPName: str = Field(
+    APPNAME: str = Field(
         default="Local-Storage",
-        validation_alias="Flask_APP",
+        validation_alias="APPNAME",
         description="The name of the Flask application. This is used for logging and identifying the application in various contexts.",
     )
     SECRET_KEY: str = Field(

@@ -33,13 +33,6 @@ class DbConfig(BaseSettings):
         description="The name of the MySQL database to connect to.",
     )
 
-    # 对模型修改监控
-    SQLALCHEMY_TRACK_MODIFICATIONS: bool = Field(
-        default=False,
-        validation_alias="SQLALCHEMY_TRACK_MODIFICATIONS",
-        description="Whether to track modifications to SQLAlchemy models. Disabled by default for performance.",
-    )
-
     # 动态生成SQLAlchemy URI
     @property
     def sqlalchemy_uri(self) -> str:

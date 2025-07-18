@@ -1,13 +1,18 @@
+from flask import current_app
 from flask_restful import Resource
 from models import Account
 from controllers import RequestProcessor
-from service_api import api
+from . import api
 
 
 # 服务介绍api
 class Service(Resource):
     def get(self):
-        return {"status": "success", "message": "Welcome to the Service API"}
+        return {
+            "status": "success",
+            "message": "Welcome to the Service API",
+            "APPName": current_app.config["APPNAME"],
+        }
 
 
 # 添加数据记录api
@@ -34,7 +39,7 @@ class GetdataApi(Resource):
 
 
 # 注册路由
-api.add_resource(Service, "/v1")
+api.add_resource(Service, "/introduction")
 api.add_resource(InsertdataApi, "/insert_data")
 api.add_resource(UpdatedataApi, "/update_user")
 api.add_resource(GetdataApi, "/get-users")
