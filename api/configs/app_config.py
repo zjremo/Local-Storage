@@ -29,7 +29,7 @@ class CydbConfig(FlaskConfig, RemoteConfig, CryptoConfig, DbConfig):
         dotenv_settings,  # .env文件加载的配置
         file_secret_settings,  # 从文件加载的敏感配置
     ):
-        # 定义优先级： .env > init > os.environ > file
+        # 定义优先级
         return (
             init_settings,
             env_settings,
