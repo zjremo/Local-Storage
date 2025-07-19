@@ -121,6 +121,7 @@ function renderTable() {
                 </td>
                 <td>${user.user_explain}</td>
                 <td>${user.plugin}</td>
+                <th><button id="delete-user">删除</button> </th>
             `;
         tableBody.appendChild(row);
     });

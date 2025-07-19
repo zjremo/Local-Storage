@@ -98,3 +98,31 @@ class Account(Base):
         except Exception as e:
             current_app.logger.error(f"Failed to get account data. Details: {e}")
             return {"error": f"Error fetching data: {e}"}, 500
+
+    @classmethod
+    def DeleteAccount(cls, account_data):
+        """
+        删除账号
+        """
+        account_id = account_data.get("id")
+        if not account_id:
+            return {"message": "Account ID must be provided!"}, 400
+        try:
+            record = db.session.query(cls).filter_by(id=account_id).first()
+            if record:
+                db.session.delete(record)
+                db.session.commit()
+                return {
+                    "status": "success",
+                    "message": "Account deleted successfully",
+                }, 200
+            else:
+                return {"status": "error", "message": "Account not found"}, 404
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Failed to delete account: {e}")
+            return {
+                "status": "error",
+                "message": "Failed to delete account",
+                "error": str(e),
+            }, 500

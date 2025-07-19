@@ -55,8 +55,16 @@ class DecryptdataApi(Resource):
             }
 
 
+# 删除数据记录api
+class DeletedataApi(Resource):
+    def post(self):
+        data_json = RequestProcessor.process_request_data()
+        return Account.DeleteAccount(data_json)
+
+
 # 注册路由
 api.add_resource(InsertdataApi, "/insert_data")
 api.add_resource(UpdatedataApi, "/update_data")
 api.add_resource(GetdataApi, "/get_data")
 api.add_resource(DecryptdataApi, "/decrypt_data")
+api.add_resource(DeletedataApi, "/delete_data")
