@@ -76,6 +76,19 @@ app.get('/get_data', async (req, res) => {
     }
 });
 
+// 删除记录
+app.post('/delete_data', (req, res) => {
+    const { id } = req.body;
+    axios.post('http://localhost:5001/delete_data', {
+        id
+    }).then(response => {
+        res.json({ message: '数据删除成功!', data: response.data });
+    }).catch(error => {
+        console.error('调用后端服务失败:', error);
+        res.status(500).json({ message: '删除数据失败', error: error.message });
+    });
+});
+
 // 启动服务器
 const PORT = 3000;
 app.listen(PORT, () => {

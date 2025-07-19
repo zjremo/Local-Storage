@@ -132,6 +132,32 @@ function renderTable() {
             handleDecrypt(e.target);
         }
     });
+
+    // 单独绑定删除按钮事件
+    document.querySelectorAll('#delete-user').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            const row = this.closest('tr');
+            const id = row.cells[0].textContent;
+            
+            if (confirm('确定要删除这条记录吗?')) {
+                fetch('/delete_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('fetch-users').click(); // 刷新数据
+                })
+                .catch(error => {
+                    console.error('删除失败:', error);
+                    alert('删除失败');
+                });
+            }
+        });
+    });
 }
 
 
