@@ -9,26 +9,39 @@
 ## ✨ 核心功能
 
 - 🔐 AES-128加密存储敏感数据
-- 🗃️ MySQL本地数据库存储
-- 🌐 基于Flask的Web接口
-- 🔄 数据加密/解密
+- 🗃️ docker拉取MySQL数据库存储
+- 🌐 Flask-restful API + Node.js 前后端分离
+- 🔄 数据加密/解密 支持插入、更新和删除记录
 
 ## 🚀 快速部署
 
 ### 环境需求
 - Python 3.11+
-- MySQL 8.0+
+- Node.js 24.4.1
+- Docker
 
 ## 使用方法
-1.安装所需依赖
+1.docker拉取MySQL并进行启动
 ```python
-pip install -r requirements.txt
+docker-compose up -d
 ```
-2.运行程序
+2.安装所需依赖(利用uv解决依赖)
 ```python
-python insert.py
+conda create -n cydb python=3.11
+conda activate cydb
+cd api
+uv pip sync uv.lock
 ```
-3.在浏览器输入`localhost:8081`即可访问
+3.启动后端服务
+```python
+uv run flask run --host=0.0.0.0 --port=5001 --debug
+```
+4.运行前端环境
+```python
+cd web
+node service.js
+```
+5.在浏览器输入`localhost:3000`即可访问
 ![image](https://github.com/user-attachments/assets/2003c7ab-de33-49f7-baae-c045f9bfdeb7)
 
 
