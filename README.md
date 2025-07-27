@@ -41,10 +41,10 @@ uv run flask run --host=0.0.0.0 --port=5001 --debug
 4.运行前端环境
 ```python
 cd web
-node service.js
+node server.js
 ```
 5.在浏览器输入`localhost:3000`即可访问
-![image](https://github.com/user-attachments/assets/2003c7ab-de33-49f7-baae-c045f9bfdeb7)
+![image](/assets/1.png)
 
 
 
