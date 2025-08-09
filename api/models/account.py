@@ -1,12 +1,13 @@
 from flask import current_app
 from .base import Base
 from .engine import db
+import uuid
 
 
 class Account(Base):
     __tablename__ = "account"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String(40), primary_key=True, default=lambda: str(uuid.uuid4()))
     username = db.Column(db.String(255), nullable=False)
     password = db.Column(db.LargeBinary(255), nullable=False)
     user_explain = db.Column(db.String(255), nullable=False)

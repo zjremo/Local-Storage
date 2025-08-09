@@ -24,7 +24,7 @@
 1.docker拉取MySQL并进行启动，然后导入SQL脚本并运行SQL脚本
 ```python
 docker-compose up -d
-docker cp account.sql mysql_db:/tmp/account.sql
+docker cp api/docker/account.sql mysql_db:/tmp/account.sql
 docker exec -it mysql_db mysql -u root -p123456 < /tmp/account.sql
 ```
 2.安装所需依赖(利用uv解决依赖)
