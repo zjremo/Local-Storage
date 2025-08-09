@@ -1,0 +1,8 @@
+# Dependency directories
+node_modules/
+
+# Optional: Common additional ignores for Node.js projects
+.env
+.DS_Store
+dist/
+*.log
