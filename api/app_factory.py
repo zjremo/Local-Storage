@@ -8,8 +8,7 @@ from cydb_app import CydbApp
 def load_additional_configs(app: CydbApp):
     app.config["SQLALCHEMY_DATABASE_URI"] = cydb_config.sqlalchemy_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-
+    
 def create_flask_app_with_configs() -> CydbApp:
     """
     创建flask应用, 配置使用.env文件
